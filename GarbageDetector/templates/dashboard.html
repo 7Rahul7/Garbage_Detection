@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Dashboard | GarbageDetector</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+  <!-- Live AQI Bar -->
+  <div class="bg-green-600 text-white py-3 px-6 flex justify-between items-center">
+    <div class="text-lg font-semibold">🌎 Live AQI</div>
+    <div id="aqiValue" class="text-lg font-bold">Fetching...</div>
+  </div>
+
+  <!-- Dashboard Content -->
+  <main class="flex-1 p-6">
+    <div class="max-w-6xl mx-auto">
+
+      <!-- Token Section -->
+      <div class="bg-white rounded-2xl shadow-md p-6 mb-8">
+        <h2 class="text-2xl font-bold mb-4 text-green-700">Token Status</h2>
+        <div class="flex items-center justify-between">
+          <div class="text-lg text-gray-600">Remaining Tokens:</div>
+          <div id="remainingTokens" class="text-3xl font-bold text-green-600">100</div>
+        </div>
+        <p class="text-gray-500 text-sm mt-2">* Each prediction deducts 3 tokens.</p>
+      </div>
+
+      <!-- Prediction History -->
+      <div class="bg-white rounded-2xl shadow-md p-6">
+        <h2 class="text-2xl font-bold mb-4 text-green-700">Prediction History</h2>
+        <div class="overflow-x-auto">
+          <table class="min-w-full bg-white">
+            <thead>
+              <tr>
+                <th class="py-2 px-4 bg-green-100 text-left text-sm font-semibold text-green-700">Date</th>
+                <th class="py-2 px-4 bg-green-100 text-left text-sm font-semibold text-green-700">Prediction</th>
+                <th class="py-2 px-4 bg-green-100 text-left text-sm font-semibold text-green-700">Tokens Used</th>
+              </tr>
+            </thead>
+            <tbody id="predictionHistory">
+              <!-- History rows will be dynamically inserted here -->
+              <tr>
+                <td class="py-2 px-4 border-b text-gray-700">2025-04-26</td>
+                <td class="py-2 px-4 border-b text-gray-700">Plastic Bottle</td>
+                <td class="py-2 px-4 border-b text-gray-700">-3</td>
+              </tr>
+              <!-- More rows -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Dummy Scripts for functionality (you'll replace these with real logic later) -->
+  <!-- <script>
+    // Example: Fetch AQI (placeholder random number for now)
+    function updateAQI() {
+      const randomAQI = Math.floor(Math.random() * (200 - 50 + 1)) + 50; // Random AQI between 50 and 200
+      document.getElementById('aqiValue').textContent = `AQI: ${randomAQI}`;
+    }
+
+    setInterval(updateAQI, 5000); // Update every 5 seconds
+    updateAQI(); // Initial call
+
+    // Example Remaining Tokens
+    let remainingTokens = 100;
+
+    // Dummy function to simulate token deduction
+    function deductTokens(count) {
+      remainingTokens -= count;
+      document.getElementById('remainingTokens').textContent = remainingTokens;
+    }
+
+    // Example: deduct 3 tokens after a "prediction"
+    // deductTokens(3);
+  </script> -->
+</body>
+</html>
