@@ -10,3 +10,7 @@ wheels/
 .venv
 
 garbage_classification/
+
+.env
+
+model.keras
