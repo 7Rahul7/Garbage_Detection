@@ -1,4 +1,10 @@
 from django.shortcuts import render
+from .forms import UploadImageForm
+import numpy as np
+import tensorflow as tf
+from django.conf import settings
+from os.path import join
+
 
 # Create your views here.
 
@@ -11,3 +17,39 @@ def register_view(request):
 
 def dashboard_view(request):
     return render(request,'dashboard.html')
+
+
+with open(join(ROOT_DIR,'AI_model/garbage_model.keras'),'rb') as model_file:
+    model = tf.keras.models.load_model(model_file)
+
+def garbage_predict(request):
+
+    prediction = None
+    
+    if request.method == "POST":
+        form = UploadImageForm(request.POST,request.FILES)
+        if form.is_valid():
+
+            try:
+                img_file = request.FILES['image']
+                file_path = default_storage.sabe('temp/'+img_file.name,img_file)
+
+                img_path = os.path.join(default_storage.location,file_path)
+
+                img = tf.keras.utils.load_img(img_path,target_size=(256,256))
+                img_arr = tf.keras.utils.array_to_img(img)
+                img_bat = tf.expand_dims(img_arr,0)
+
+                pred = model.predict(img_bat)
+                predicted_class = tf.argmax(pred,axis=1).numpy()[0]
+
+                prediction = predicted_class
+
+            except exception as e:
+                prediction = f"Error {str(e)}"
+
+    else:
+        form = UploadImageForm()
+
+
+    return render(request,'predict.html',{'form':form,'prediction':prediction})

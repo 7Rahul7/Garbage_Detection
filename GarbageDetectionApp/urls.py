@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from django.conf import settings
+from django.conf.urls.static import static
 from GarbageDetector.views import login_view, register_view,dashboard_view
 
 urlpatterns = [
@@ -23,9 +25,7 @@ urlpatterns = [
     path('accounts/',include('allauth.urls')),
     path('login/',login_view,name = 'login'),
     path('register/',register_view,name = 'register'),
-    path('',dashboard_view,name = 'dashbaord'),
+    path('',dashboard_view,name = 'dashbaord'),  
 
-
-    
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
