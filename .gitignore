@@ -13,4 +13,4 @@ garbage_classification/
 
 .env
 
-model.keras
+# AI_model/garbage_model.keras

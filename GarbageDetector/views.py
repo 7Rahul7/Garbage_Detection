@@ -3,10 +3,15 @@ from .forms import UploadImageForm
 import numpy as np
 import tensorflow as tf
 from django.conf import settings
+import os
 from os.path import join
+from tensorflow.keras.preprocessing import image
+
 
 
 # Create your views here.
+
+ROOT_DIR = settings.BASE_DIR
 
 def login_view(request):
     return render(request, 'signin.html')
@@ -19,8 +24,8 @@ def dashboard_view(request):
     return render(request,'dashboard.html')
 
 
-with open(join(ROOT_DIR,'AI_model/garbage_model.keras'),'rb') as model_file:
-    model = tf.keras.models.load_model(model_file)
+model_path = os.path.join(settings.BASE_DIR, 'AI_model/garbage_model.keras')
+model = tf.keras.models.load_model(model_path)
 
 def garbage_predict(request):
 
@@ -53,3 +58,4 @@ def garbage_predict(request):
 
 
     return render(request,'predict.html',{'form':form,'prediction':prediction})
+
