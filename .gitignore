@@ -15,7 +15,7 @@ garbage_classification/
 
 # AI_model/garbage_model.keras
 AI_model/garbage_model_fixed.keras
-AI_model/garbage_model.keras
+# AI_model/garbage_model.keras
 
 
 # Media folder
