@@ -15,7 +15,7 @@ from django.contrib.auth import login,get_user_model,authenticate,logout
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.decorators import login_required
 from .forms import UploadImageForm
-from .models import Profile
+from .models import Profile,PredictionHistory
 from os.path import join
 from loguru import logger
 from django.http import JsonResponse
@@ -184,9 +184,13 @@ def verify_otp(request):
 # Dashboard
 @login_required(login_url='login')
 def dashboard_view(request):
-    return render(request,'dashboard.html')
+    profile = Profile.objects.get(user=request.user)
+    history = PredictionHistory.objects.filter(user=request.user).order_by('-predicted_at')
 
-
+    return render(request, 'dashboard.html', {
+        'profile': profile,
+        'history': history,
+    })
 
 # According to folder layout.
 LABELS = [
@@ -221,22 +225,23 @@ def garbage_predict(request):
         form = UploadImageForm(request.POST, request.FILES)
 
         if form.is_valid():
-            profile = Profile.objects.get(user=request.user)
+            try:
+                profile = Profile.objects.get(user=request.user)
 
-            if profile.tokens < 5:
-                prediction = "Insufficient tokens. Please recharge."
-            else:
-                try:
-    
+                if profile.tokens < 5:
+                    prediction = "Insufficient tokens. Please recharge."
+                else:
                     img_file = request.FILES['file']
                     file_path = default_storage.save(f"temp/{img_file.name}", img_file)
                     img_full_path = os.path.join(settings.MEDIA_ROOT, file_path)
                     image_url = default_storage.url(file_path)
 
+                    # Preprocess image
                     img = tf.keras.utils.load_img(img_full_path, target_size=(256, 256))
                     img_array = tf.keras.utils.img_to_array(img)
                     img_batch = tf.expand_dims(img_array, axis=0)
 
+                    # Predict
                     pred = model.predict(img_batch)
                     predicted_index = tf.argmax(pred, axis=1).numpy()[0]
                     label = LABELS[predicted_index]
@@ -245,16 +250,24 @@ def garbage_predict(request):
                     prediction = f"{label.capitalize()} ({status})"
 
                     # Deduct tokens
-
-                    logger.info(f"Tokens: {profile.tokens}")
                     profile.tokens -= 5
                     profile.save()
-                    logger.info(f"Tokens: {profile.tokens}")
+                    logger.info(f"Tokens remaining: {profile.tokens}")
 
+                    # Save prediction history
+                    PredictionHistory.objects.create(
+                        user=request.user,
+                        image=img_file,
+                        predicted_label=label,
+                        recyclable_status=status
+                    )
 
-                except Exception as e:
-                    logger.error(f"Prediction error: {e}")
-                    prediction = f"Error: {e}"
+            except Profile.DoesNotExist:
+                prediction = "User profile not found."
+                logger.error("User profile not found.")
+            except Exception as e:
+                prediction = f"Error: {e}"
+                logger.error(f"Prediction error: {e}")
 
     return render(request, 'predict.html', {
         'form': form,

@@ -1,22 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>User Dashboard | GarbageDetector</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
   <!-- Header -->
-  <!-- Header -->
   <header class="bg-white shadow-md p-4 flex items-center justify-between">
     <div class="flex items-center space-x-6">
-      <h1 class="text-2xl font-bold text-green-700">Garbage Detection</h1>
-      <a href="{% url 'garbage_predict' %}" class="text-sm text-green-600 hover:underline font-medium">Prediction
-        Page</a>
+      <h1 class="text-2xl font-bold text-green-700">GarbageDetector</h1>
+      <a href="{% url 'garbage_predict' %}" class="text-sm text-green-600 hover:underline font-medium">Prediction Page</a>
     </div>
     <div class="flex items-center space-x-4">
       <span class="text-sm text-gray-700">👤 {{ request.user.username }}</span>
@@ -26,25 +22,25 @@
 
   <!-- Live AQI Bar -->
   <div class="bg-green-600 text-white py-3 px-6 flex justify-between items-center">
-    <div class="text-lg font-semibold">🌎 Live AQI</div>
+    <div class="text-lg font-semibold">🌍 Live AQI</div>
     <div id="aqiValue" class="text-lg font-bold">Fetching...</div>
   </div>
 
-  <!-- Dashboard Content -->
+  <!-- Main Content -->
   <main class="flex-1 p-6">
-    <div class="max-w-6xl mx-auto">
+    <div class="max-w-6xl mx-auto space-y-8">
 
       <!-- Token Section -->
-      <div class="bg-white rounded-2xl shadow-md p-6 mb-8">
+      <div class="bg-white rounded-2xl shadow-md p-6">
         <h2 class="text-2xl font-bold mb-4 text-green-700">Token Status</h2>
         <div class="flex items-center justify-between">
           <div class="text-lg text-gray-600">Remaining Tokens:</div>
-          <div id="remainingTokens" class="text-3xl font-bold text-green-600">{{ request.user.profile.tokens }}</div>
+          <div class="text-3xl font-bold text-green-600">{{ profile.tokens }}</div>
         </div>
         <p class="text-gray-500 text-sm mt-2">* Each prediction deducts 5 tokens.</p>
       </div>
 
-      <!-- Prediction History -->
+      <!-- Prediction History Section -->
       <div class="bg-white rounded-2xl shadow-md p-6">
         <h2 class="text-2xl font-bold mb-4 text-green-700">Prediction History</h2>
         <div class="overflow-x-auto">
@@ -52,18 +48,31 @@
             <thead>
               <tr>
                 <th class="py-2 px-4 bg-green-100 text-left text-sm font-semibold text-green-700">Date</th>
+                <th class="py-2 px-4 bg-green-100 text-left text-sm font-semibold text-green-700">Image</th>
                 <th class="py-2 px-4 bg-green-100 text-left text-sm font-semibold text-green-700">Prediction</th>
                 <th class="py-2 px-4 bg-green-100 text-left text-sm font-semibold text-green-700">Tokens Used</th>
               </tr>
             </thead>
-            <tbody id="predictionHistory">
-              <!-- You can loop through prediction history if available -->
-              <tr>
-                <td class="py-2 px-4 border-b text-gray-700">2025-04-26</td>
-                <td class="py-2 px-4 border-b text-gray-700">Plastic Bottle</td>
-                <td class="py-2 px-4 border-b text-gray-700">-5</td>
-              </tr>
-              <!-- Add dynamic rows here -->
+            <tbody>
+              {% if history %}
+                {% for record in history %}
+                  <tr>
+                    <td class="py-2 px-4 border-b text-gray-700">{{ record.predicted_at|date:"Y-m-d H:i" }}</td>
+
+                    <td class="py-2 px-4 border-b text-gray-700">
+                      <img src="{{ record.image.url }}" alt="Prediction Image" class="w-16 h-16 object-cover rounded" />
+                    </td>
+                    <td class="py-2 px-4 border-b text-gray-700">
+                      {{ record.predicted_label }} ({{ record.recyclable_status }})
+                    </td>
+                    <td class="py-2 px-4 border-b text-red-500 font-semibold">-5</td>
+                  </tr>
+                {% endfor %}
+              {% else %}
+                <tr>
+                  <td colspan="4" class="py-2 px-4 text-gray-500 text-center">No prediction history available.</td>
+                </tr>
+              {% endif %}
             </tbody>
           </table>
         </div>
@@ -72,6 +81,7 @@
     </div>
   </main>
 
+  <!-- AQI Script -->
   <script>
     async function updateAQI(city = "Kathmandu") {
       try {
@@ -87,9 +97,9 @@
       }
     }
 
-    setInterval(() => updateAQI("Kathmandu"), 5000);  // You can dynamically set city
-    updateAQI("Kathmandu");  // Initial fetch
+    setInterval(() => updateAQI("Kathmandu"), 5000);
+    updateAQI("Kathmandu");
   </script>
-</body>
 
+</body>
 </html>
