@@ -95,7 +95,7 @@ def login_view(request):
             user = authenticate(request, email=email, password=password)
             if user:
                 login(request, user)
-                return redirect("dashbaord")
+                return redirect("dashboard")
             else:
                 return render(request, "signin.html", {"error": "Invalid credentials"})
         except Exception as e:
