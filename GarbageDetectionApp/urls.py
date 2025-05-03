@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
-from GarbageDetector.views import login_view, register_view,dashboard_view,garbage_predict,verify_otp,get_aqi
+from GarbageDetector.views import login_view, register_view,dashboard_view,garbage_predict,verify_otp,get_aqi,logout_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,9 +26,10 @@ urlpatterns = [
     path('login/',login_view,name = 'login'),
     path('register/',register_view,name = 'register'),
     path('verify-otp/', verify_otp, name='verify_otp'),
-    path('',dashboard_view,name = 'dashbaord'),
+    path('',dashboard_view,name = 'dashboard'),
     path('predict/',garbage_predict,name = 'garbage_predict'),
     path('get-aqi/', get_aqi, name='get_aqi'),
+    path('logout/', logout_view, name='logout'),
 
 
 ]

@@ -11,8 +11,9 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
-from django.contrib.auth import login,get_user_model,authenticate
+from django.contrib.auth import login,get_user_model,authenticate,logout
 from django.contrib.auth.backends import ModelBackend
+from django.contrib.auth.decorators import login_required
 from .forms import UploadImageForm
 from .models import Profile
 from os.path import join
@@ -102,6 +103,10 @@ def login_view(request):
 
     return render(request, "signin.html")
 
+#logout
+def logout_view(request):
+    logout(request)
+    return redirect('login')
 
 # Register
 def register_view(request):
@@ -177,6 +182,7 @@ def verify_otp(request):
 
 
 # Dashboard
+@login_required(login_url='login')
 def dashboard_view(request):
     return render(request,'dashboard.html')
 
@@ -205,7 +211,7 @@ RECYCLABLE = {"brown-glass", "cardboard", "green-glass", "metal", "paper", "plas
 model_path = os.path.join(settings.BASE_DIR, 'AI_model/garbage_model_fixed.keras')
 model = tf.keras.models.load_model(model_path)
 
-
+@login_required(login_url='login')
 def garbage_predict(request):
     prediction = None
     image_url = None
