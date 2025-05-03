@@ -149,8 +149,8 @@ The model supports the following 12 classes:
 ## 📬 Contact
 
 Made with 💚 by \[Your Name]
-Email: [your\_email@example.com](mailto:your_email@example.com)
-GitHub: [@yourusername](https://github.com/yourusername)
+Email: [your\_email@example.com](mailto:jbadhikari@gmail.com)
+GitHub: [@yourusername](https://github.com/7Rahul7)
 
 ```
 
