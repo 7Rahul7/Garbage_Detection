@@ -1,20 +1,117 @@
-from django.shortcuts import render
-from .forms import UploadImageForm
+import random
+import string
 import numpy as np
-import tensorflow as tf
-from django.conf import settings
 import os
-from os.path import join
+import tensorflow as tf
 from tensorflow.keras.preprocessing import image
-from loguru import logger
+from django.shortcuts import render
 from django.core.files.storage import default_storage
+from django.conf import settings
+from django.core.mail import send_mail
+from django.contrib.auth.models import User
+from django.shortcuts import redirect
+from django.contrib.auth import login
+from .forms import UploadImageForm
+from os.path import join
+from loguru import logger
 
 
 
-
-# Create your views here.
 
 ROOT_DIR = settings.BASE_DIR
+
+
+#Otp generation
+def generate_otp(length=6):
+    characters = string.ascii_letters + string.digits
+    otp = ''.join(random.choice(characters) for i in range(length) )
+    return otp
+
+def otp_to_mail(email,otp):
+    subject = 'Your OTP'
+    message = f'Your OTP is: {otp}\nUse this to verification and complete your Registration.'
+    send_mail(subject,message, settings.DEFAULT_FROM_EMAIL,[email])
+    
+
+
+#Login
+def login_view(request):
+    if request.method == "POST":
+        email = request.POST["email"]
+        password = request.POST["password"]
+        user = authenticate(request, email=email, password=password)
+    if user:
+        login(request, user)
+        return redirect(name=dashboard_view)
+    return render(request, 'signin.html')
+
+
+# Register
+def register_view(request):
+    error = None
+    if request.method == "POST":
+        try:
+            email = request.POST.get("email")
+            password = request.POST.get("password")
+            username = request.POST.get("username")
+
+
+            if User.objects.filter(email=email).exists():
+                error = "Email already exists."
+            else:
+                otp = generate_otp()
+                request.session["email"] = email
+                request.session["password"] = password
+                request.session["username"] = username
+                request.session["otp"] = otp
+
+                otp_to_mail(email, otp)
+                return redirect("verify_otp")  # URL name for OTP verification
+        except Exception as e:
+            logger.error(f"Error in register_view: {e}")
+            error = "Something went wrong. Please try again."
+
+    return render(request, "signup.html", {"error": error})
+
+def verify_otp(request):
+    error = None
+
+    if request.method == "POST":
+        input_otp = request.POST.get("otp")
+        session_otp = request.session.get("otp")
+        email = request.session.get("email")
+        username = request.session.get("username")
+        password = request.session.get("password")
+
+        if not all([session_otp, email, username, password]):
+            error = "Session expired. Please register again."
+            return render(request, "verify_otp.html", {"error": error})
+
+        if input_otp == session_otp:
+            try:
+                user = User.objects.create_user(username=username, email=email, password=password)
+                user.save()
+                login(request, user)
+                # Clean up session
+                del request.session['otp']
+                del request.session['email']
+                del request.session['username']
+                del request.session['password']
+                return redirect("dashboard_view")  # or 'dashboard' if you use name in urls.py
+            except Exception as e:
+                logger.error(f"User creation error: {e}")
+                error = "Something went wrong during registration."
+        else:
+            error = "Invalid OTP. Please try again."
+
+    return render(request, "verify_otp.html", {"error": error})
+
+
+# Dashboard
+def dashboard_view(request):
+    return render(request,'dashboard.html')
+
+
 
 # According to folder layout.
 LABELS = [
@@ -34,18 +131,6 @@ LABELS = [
 
 # According to google and chatgpt
 RECYCLABLE = {"brown-glass", "cardboard", "green-glass", "metal", "paper", "plastic", "white-glass"}
-
-
-
-def login_view(request):
-    return render(request, 'signin.html')
-
-
-def register_view(request):
-    return render(request, 'signup.html')
-
-def dashboard_view(request):
-    return render(request,'dashboard.html')
 
 
 model_path = os.path.join(settings.BASE_DIR, 'AI_model/garbage_model_fixed.keras')

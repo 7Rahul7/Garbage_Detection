@@ -9,14 +9,19 @@ wheels/
 # Virtual environments
 .venv
 
-garbage_classification/
+
+# Image folder
+/garbage_classification
 
 .env
 
 # AI_model/garbage_model.keras
-AI_model/garbage_model_fixed.keras
+# AI_model/garbage_model_fixed.keras
 # AI_model/garbage_model.keras
+
+# Model files
+*.keras
 
 
 # Media folder
-/media
+media/
