@@ -3,6 +3,7 @@ import string
 import numpy as np
 import os
 import tensorflow as tf
+import requests
 from tensorflow.keras.preprocessing import image
 from django.shortcuts import render
 from django.core.files.storage import default_storage
@@ -16,12 +17,60 @@ from .forms import UploadImageForm
 from .models import Profile
 from os.path import join
 from loguru import logger
+from django.http import JsonResponse
+# from dotenv import load_dotenv
+from decouple import config
+
 
 
 
 
 ROOT_DIR = settings.BASE_DIR
 User = get_user_model()
+# load_dotenv()
+
+
+
+def get_aqi(request):
+    OPENWEATHER_API_KEY= config('OPENWEATHER_API_KEY')
+    city = request.GET.get('city', 'Kathmandu')
+
+    try:
+        # lat/lon fetch
+        geo_url = f"http://api.openweathermap.org/geo/1.0/direct?q={city}&limit=1&appid={OPENWEATHER_API_KEY}"
+        geo_response = requests.get(geo_url)
+        logger.info(f"Geo response: {geo_response.text}")
+        geo_data = geo_response.json()
+
+        if not geo_data:
+            return JsonResponse({"error": "City not found"}, status=404)
+
+        lat = geo_data[0]['lat']
+        lon = geo_data[0]['lon']
+
+        # AQI data
+        aqi_url = f"http://api.openweathermap.org/data/2.5/air_pollution?lat={lat}&lon={lon}&appid={OPENWEATHER_API_KEY}"
+        aqi_response = requests.get(aqi_url)
+        logger.info(f"AQI response: {aqi_response.text}")
+        aqi_data = aqi_response.json()
+
+        aqi_level = aqi_data['list'][0]['main']['aqi']
+        aqi_status = {
+            1: "Good",
+            2: "Fair",
+            3: "Moderate",
+            4: "Poor",
+            5: "Very Poor"
+        }.get(aqi_level, "Unknown")
+
+        return JsonResponse({
+            "aqi": aqi_level,
+            "status": aqi_status
+        })
+
+    except Exception as e:
+        logger.error(f"AQI fetch failed: {e}")
+        return JsonResponse({"error": f"Server error: {str(e)}"}, status=500)
 
 #Otp generation
 def generate_otp(length=6):
