@@ -1,4 +1,3 @@
-Great! Here's a rewritten and well-structured `README.md` for your project, tailored to your stack (Django, TensorFlow, Google Login, token system), using **`uv` for virtual environments**, and noting the use of **Kaggle notebooks with GPU** for model training.
 
 ---
 
@@ -138,6 +137,10 @@ The model supports the following 12 classes:
 
 ---
 
+## Model File Link
+
+* **link**: https://drive.google.com/file/d/10EOxMPrvc-_ZoRFoEZlHpNF-I7Ltx_FG/view?usp=sharing
+
 ## 🙏 Acknowledgements
 
 * Trained on [Garbage Classification Dataset](https://www.kaggle.com/datasets/asdasdasasdas/garbage-classification)
@@ -149,12 +152,7 @@ The model supports the following 12 classes:
 ## 📬 Contact
 
 Made with 💚 by \[Your Name]
-Email: [your\_email@example.com](mailto:jbadhikari@gmail.com)
-GitHub: [@yourusername](https://github.com/7Rahul7)
+Email: [jbadhikari1@gmail.com](mailto:jbadhikari@gmail.com)
+GitHub: [@7Rahul7](https://github.com/7Rahul7)
 
-```
-
----
-
-Would you like me to generate the `requirements.txt` for you based on your stack so far?
 ```
