@@ -62,15 +62,49 @@ uv venv
 source .venv/bin/activate  # or .venv\Scripts\activate on Windows
 ```
 
-### 3. 🔑 Add Environment Variables
+Here’s how you can write a clear section in your `README.md` file to explain the required environment variables and how to create a `.env` file:
 
-Create a `.env` file:
+---
+
+## 🔐 Environment Variables Setup
+
+To keep sensitive information secure and out of your source code, this project uses a `.env` file to store environment variables. You **must create a `.env` file** in the root directory of your project with the following variables:
+
+### Required Environment Variables
 
 ```env
-EMAIL_HOST_USER=your_email@gmail.com
-EMAIL_HOST_PASSWORD=your_app_password
-SECRET_KEY=your_django_secret_key
+GOOGLE_CLIENT_ID=your_google_oauth_client_id
+GOOGLE_CLIENT_SECRET=your_google_oauth_client_secret
+
+EMAIL_HOST_USER=your_email_address@example.com
+EMAIL_HOST_PASSWORD=your_email_app_password
+
+OPENWEATHER_API_KEY=your_openweather_api_key
 ```
+
+### 📌 Instructions to Create a `.env` File
+
+1. In the root of your Django project, create a new file named `.env` (note the dot at the beginning).
+2. Open the `.env` file in your code editor.
+3. Paste the variable names and add your actual keys/secrets as shown above.
+4. **DO NOT** commit this file to Git. The `.env` file should be listed in your `.gitignore`.
+
+### Example `.env` File
+
+```env
+GOOGLE_CLIENT_ID=12345-example-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=abcdeExampleSecret123
+
+EMAIL_HOST_USER=yourname@gmail.com
+EMAIL_HOST_PASSWORD=your_app_password_here
+
+OPENWEATHER_API_KEY=abcdef1234567890examplekey
+```
+
+> ✅ Make sure your Django project is configured to load environment variables using a package like `python-decouple` or `django-environ`.
+
+---
+
 
 ### 4. 🔧 Install Dependencies
 
