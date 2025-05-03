@@ -185,7 +185,7 @@ The model supports the following 12 classes:
 
 ## 📬 Contact
 
-Made with 💚 by \[Your Name]
+Made with 💚 by \Keshab Adhikari
 Email: [jbadhikari1@gmail.com](mailto:jbadhikari@gmail.com)
 GitHub: [@7Rahul7](https://github.com/7Rahul7)
 
