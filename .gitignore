@@ -20,7 +20,7 @@ wheels/
 # AI_model/garbage_model.keras
 
 # Model files
-*.keras
+# *.keras
 
 
 # Media folder
