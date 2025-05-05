@@ -1,7 +1,7 @@
 
----
 
-````markdown
+
+
 # ♻️ GarbageDetector - AI-Powered Waste Classification App
 
 GarbageDetector is a Django web application that uses a TensorFlow model to classify garbage into recyclable and non-recyclable categories. It features email-based user registration with OTP verification, Google Login integration, and a token-based prediction system.
@@ -42,7 +42,7 @@ GarbageDetector is a Django web application that uses a TensorFlow model to clas
 ├── requirements.txt           # Project dependencies
 ├── main.py / manage.py        # Django run and management commands
 └── uv.lock / pyproject.toml   # uv-based virtual environment files
-````
+
 
 ---
 
