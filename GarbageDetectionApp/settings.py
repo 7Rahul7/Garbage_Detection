@@ -57,6 +57,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
 ]
 
 ROOT_URLCONF = 'GarbageDetectionApp.urls'
@@ -147,6 +150,8 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+
+
 SITE_ID = 1
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
@@ -155,6 +160,8 @@ ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -171,3 +178,8 @@ AUTHENTICATION_BACKENDS = [
     'GarbageDetector.backends.EmailBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+
+SESSION_ENGINE = "django.contrib.sessions.backends.db"  # default
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
